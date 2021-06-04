@@ -2,19 +2,12 @@ package kr.ac.jejunu.user;
 
 import java.sql.*;
 
-public class UserDao {
+public abstract class UserDao {
     public User get(Integer id) throws ClassNotFoundExeption, SQLExeption {
         //데이터 어딨어? => mysql
-        //driver loading
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        //connection
-        Connection connection =
-                DriverManager.getConnection(
-                        "jdbc:mysql://localhost/jeju?" +
-                                "characterEncoding=utf-8&serverTimezone=UTC"
-                        ,"jeju","jejupw"
-                );
-        //query
+
+        Connection connection = getConnection();
+
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "select * from  userinfo where id = ?"
         );
@@ -37,13 +30,8 @@ public class UserDao {
 
     public void insert(User user) throws ClassNotFoundException, SQLException {
         //데이터 어딨어? => mysql
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection =
-                DriverManager.getConnection(
-                        "jdbc:mysql://localhost/jeju?" +
-                                "characterEncoding=utf-8&serverTimezone=UTC"
-                        ,"jeju","jejupw"
-                );
+        Connection connection = getConnection();
+
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into userinfo (name, password) values ( ?, ? )"
                 , Statement.RETURN_GENERATED_KEYS
@@ -61,4 +49,14 @@ public class UserDao {
         preparedStatement.close();
         connection.close();
     }
+
+    abstract public Connection getConnection() throws ClassNotFoundException, SQLException;
+//    {
+//        Class.forName("com.mysql.cj.jdbc.Driver");
+//        return DriverManager.getConnection(
+//                "jdbc:mysql://localhost/jeju?" +
+//                        "characterEncoding=utf-8&serverTimezone=UTC"
+//                , "jeju", "jejupw"
+//        );
+//    }
 }
